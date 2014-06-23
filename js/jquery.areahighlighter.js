@@ -14,9 +14,11 @@
 	var areas = {};
 	
 	/**
-	 * Main function. Possible actions are: getAreas, showAreas, showArea, hideAreas, hideArea, addArea
+	 * Main function. Possible actions are:
+     * getAreas, showAreas, showArea, hideAreas,
+     * hideArea, addArea, removeArea, updateArea
 	 */
-	$.fn.areahighlighter = function (action, area) {
+	$.fn.areahighlighter = function (action, area, data) {
 		if ( typeof action === 'object' ) {
 			target = this;
 			var options = $.fn.extend({
@@ -45,6 +47,12 @@
 				case 'addArea':
 					addArea(area.id, area.x, area.y, area.radius, area.caption, area.visible);
 					break;
+                case 'removeArea':
+                    removeArea(area);
+                    break;
+                case 'updateArea':
+                    updateArea(area, data);
+                    break;
 			}
 		}
 		return this;
@@ -56,8 +64,8 @@
 	function handleArea(area) {
 		area.helper.draggable({
 			stop : function (event, ui) {
-				area.top = ui.position.top+area.radius/2;
-				area.left = ui.position.left+area.radius/2;
+				area.y = ui.position.top+area.radius/2;
+				area.x = ui.position.left+area.radius/2;
 			},
 			containment: "parent"
 		});
@@ -68,9 +76,9 @@
 	 */
 	function addArea(id, x, y, radius, caption, visible) {
 		var area = {
-			helper: $('<div title="'+caption+'" class="areahighlighter-helper" style="border-radius:'+radius+'px;top:'+(x-radius/2)+'px;left:'+(y-radius/2)+'px;width:'+(radius*2)+'px;height:'+(radius*2)+'px;display:'+(visible?'block':'none')+';"></div>').appendTo(target),
-			top: x,
-			left: y,
+			helper: $('<div title="'+caption+'" class="areahighlighter-helper" style="border-radius:'+radius+'px;left:'+(x-radius/2)+'px;top:'+(y-radius/2)+'px;width:'+(radius*2)+'px;height:'+(radius*2)+'px;display:'+(visible?'block':'none')+';"></div>').appendTo(target),
+			x: x,
+			y: y,
 			radius : radius,
 			caption : caption,
 			visible : visible
@@ -81,6 +89,8 @@
 	
 	/**
 	 * Show one area
+     *
+     * @param areaId
 	 */
 	function showArea(areaId) {
 		if ( areas[areaId] ) {
@@ -100,6 +110,8 @@
 	
 	/**
 	 * Hide one area
+     *
+     * @param areaId
 	 */
 	function hideArea(areaId) {
 		if ( areas[areaId] ) {
@@ -116,4 +128,37 @@
 			hideArea(id);
 		}
 	}
+
+    /**
+     * Removes area helper and data
+     *
+     * @param areaId
+     */
+    function removeArea(areaId) {
+        if ( areas[areaId] ) {
+            areas[areaId].helper.remove();
+            delete areas[areaId];
+        }
+    }
+
+    /**
+     * Updates area data
+     *
+     * @param areaId
+     * @param data
+     */
+    function updateArea(areaId, data) {
+        if ( areas[areaId] ) {
+            var properties = ['caption','x','y','radius'];
+            for ( var i in properties ) {
+                if ( typeof data[properties[i]] !== 'undefined' ) {
+                    areas[areaId][properties[i]] = data[properties[i]];
+                }
+            }
+            if ( typeof data['id'] !== 'undefined' ) {
+                areas[data['id']] = areas[areaId];
+                delete areas[areaId];
+            }
+        }
+    }
 }(jQuery));
