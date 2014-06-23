@@ -25,7 +25,7 @@
 				areas : []
 			}, action);
 			for ( var i=0; i<options.areas.length; i++ ) {
-				addArea(options.areas[i].id, options.areas[i].x, options.areas[i].y, options.areas[i].radius, options.areas[i].caption, options.areas[i].visible);
+				addArea(options.areas[i]);
 			}
 		}else{
 			switch ( action ) {
@@ -45,7 +45,7 @@
 					hideArea(area);
 					break;
 				case 'addArea':
-					addArea(area.id, area.x, area.y, area.radius, area.caption, area.visible);
+					addArea(area);
 					break;
                 case 'removeArea':
                     removeArea(area);
@@ -62,28 +62,38 @@
 	 * Internal function. Adds event handlers etc to area helper element
 	 */
 	function handleArea(area) {
-		area.helper.draggable({
-			stop : function (event, ui) {
-				area.y = ui.position.top+area.radius/2;
-				area.x = ui.position.left+area.radius/2;
-			},
-			containment: "parent"
-		});
+        if ( area.draggable ) {
+            area.helper.draggable({
+                stop : function (event, ui) {
+                    area.y = ui.position.top+area.radius/2;
+                    area.x = ui.position.left+area.radius/2;
+                },
+                containment: "parent"
+            });
+        } else {
+            area.helper.draggable('destroy');
+        }
 	}
 	
 	/**
 	 * Adds area to target
+     *
+     * @param data
 	 */
-	function addArea(id, x, y, radius, caption, visible) {
-		var area = {
-			helper: $('<div title="'+caption+'" class="areahighlighter-helper" style="border-radius:'+radius+'px;left:'+(x-radius/2)+'px;top:'+(y-radius/2)+'px;width:'+(radius*2)+'px;height:'+(radius*2)+'px;display:'+(visible?'block':'none')+';"></div>').appendTo(target),
-			x: x,
-			y: y,
-			radius : radius,
-			caption : caption,
-			visible : visible
-		};
-		areas[id] = area;
+	function addArea(data) {
+        var area = $.fn.extend({}, {
+            id: data.length,
+            x: 0,
+            y: 0,
+            radius: 10,
+            caption: '',
+            visible: true,
+            draggable: true
+        }, data);
+        area.helper =
+            $('<div title="'+area.caption+'" class="areahighlighter-helper" style="border-radius:'+area.radius+'px;left:'+(area.x-area.radius/2)+'px;top:'+(area.y-area.radius/2)+'px;width:'+(area.radius*2)+'px;height:'+(area.radius*2)+'px;display:'+(area.visible?'block':'none')+';"></div>')
+            .appendTo(target);
+		areas[area.id] = area;
 		handleArea(area);
 	}
 	
@@ -149,10 +159,20 @@
      */
     function updateArea(areaId, data) {
         if ( areas[areaId] ) {
-            var properties = ['caption','x','y','radius'];
+            var properties = ['caption','x','y','radius','draggable'];
             for ( var i in properties ) {
                 if ( typeof data[properties[i]] !== 'undefined' ) {
-                    areas[areaId][properties[i]] = data[properties[i]];
+                    if ( properties[i]=='draggable' && areas[areaId][properties[i]]!=data['draggable'] ) {
+                        // we need to init/destroy draggable if changed
+                        areas[areaId][properties[i]] = data[properties[i]];
+                        handleArea(areas[areaId]);
+                    } else {
+                        areas[areaId][properties[i]] = data[properties[i]];
+                    }
+                    if ( properties[i]=='caption' ) {
+                        areas[areaId].helper.attr('title', data['caption']);
+                    }
+
                 }
             }
             if ( typeof data['id'] !== 'undefined' ) {
