@@ -1,0 +1,13 @@
+/**
+ * jQuery Area Highlighter
+ *
+ */
+.areahighlighter-helper {
+	position: absolute;
+	cursor: move;
+	background: none;
+	border: 1px solid #fafafa;
+    -webkit-box-shadow: 1px 0px 10px 0px rgba(50, 50, 50, 0.75);
+    -moz-box-shadow:    1px 0px 10px 0px rgba(50, 50, 50, 0.75);
+    box-shadow:         1px 0px 10px 0px rgba(50, 50, 50, 0.75);
+}
