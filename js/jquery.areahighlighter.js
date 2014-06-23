@@ -62,7 +62,7 @@
 	 * Internal function. Adds event handlers etc to area helper element
 	 */
 	function handleArea(area) {
-        if ( area.draggable ) {
+        if ( area.draggable==true && area.helper.is('.ui-draggable')==false ) {
             area.helper.draggable({
                 stop : function (event, ui) {
                     area.y = ui.position.top+area.radius/2;
@@ -70,8 +70,22 @@
                 },
                 containment: "parent"
             });
-        } else {
+        } else if( area.draggable==false && area.helper.is('.ui-draggable')==true ) {
             area.helper.draggable('destroy');
+        }
+        if ( area.resizable==true && area.helper.is('.ui-resizable')==false ) {
+            area.helper.resizable({
+                handles: 'all',
+                aspectRatio: true,
+                resize: function (event, ui) {
+                    area.helper.css('border-radius', Math.ceil(ui.size.width/2));
+                },
+                stop: function (event, ui) {
+                    area.radius = Math.ceil(ui.size.width/2);
+                }
+            });
+        } else if( area.resizable==false && area.helper.is('.ui-resizable')==true ) {
+            area.helper.resizable('destroy');
         }
 	}
 	
@@ -88,7 +102,8 @@
             radius: 10,
             caption: '',
             visible: true,
-            draggable: true
+            draggable: true,
+            resizable: true
         }, data);
         area.helper =
             $('<div title="'+area.caption+'" class="areahighlighter-helper" style="border-radius:'+area.radius+'px;left:'+(area.x-area.radius/2)+'px;top:'+(area.y-area.radius/2)+'px;width:'+(area.radius*2)+'px;height:'+(area.radius*2)+'px;display:'+(area.visible?'block':'none')+';"></div>')
@@ -162,23 +177,18 @@
             var properties = ['caption','x','y','radius','draggable'];
             for ( var i in properties ) {
                 if ( typeof data[properties[i]] !== 'undefined' ) {
-                    if ( properties[i]=='draggable' && areas[areaId][properties[i]]!=data['draggable'] ) {
-                        // we need to init/destroy draggable if changed
-                        areas[areaId][properties[i]] = data[properties[i]];
-                        handleArea(areas[areaId]);
-                    } else {
-                        areas[areaId][properties[i]] = data[properties[i]];
-                    }
+                    areas[areaId][properties[i]] = data[properties[i]];
                     if ( properties[i]=='caption' ) {
                         areas[areaId].helper.attr('title', data['caption']);
                     }
-
                 }
             }
             if ( typeof data['id'] !== 'undefined' ) {
                 areas[data['id']] = areas[areaId];
                 delete areas[areaId];
+                areaId = data['id'];
             }
+            handleArea(areas[areaId]);
         }
     }
 }(jQuery));
