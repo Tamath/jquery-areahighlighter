@@ -4,7 +4,7 @@
 Plugin allows to create and manipulate custom highlighted areas on different
 
 ##Requirements
-Area Highlighter needs (jQuery UI Draggable)[http://jqueryui.com/draggable/] to drag areas around and (jQuery UI Resizable)[http://jqueryui.com/resizable/] to resize them.
+Area Highlighter needs [jQuery UI Draggable](http://jqueryui.com/draggable/) to drag areas around and [jQuery UI Resizable](http://jqueryui.com/resizable/) to resize them.
 
 ##Basic
 To initilize highlighter, just pass list of areas to it
