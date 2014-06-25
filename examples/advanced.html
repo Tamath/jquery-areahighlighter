@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+
+		<title>jQuery Area Highlighter advanced example</title>
+
+		<!-- requirements -->
+		<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+		<script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.4/jquery-ui.min.js"></script>
+		<link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.4/themes/smoothness/jquery-ui.css" />
+		
+		<!-- library itself -->
+		<script src="../js/jquery.areahighlighter.js"></script>
+		<link rel="stylesheet" type="text/css" href="../css/jquery.areahighlighter.css">
+	  
+	</head>
+
+	<body>
+  
+	  <style type="text/css">
+		/**
+		 * Example CSS
+		 */
+		.container {
+			position: relative;
+			display: block;
+			width: 500px;
+			height: 500px;
+			border: 1px dotted #000000;
+		}
+		.labels-container .label {
+			text-decoration: underline;
+			cursor: pointer;
+		}
+		.labels-container .label:hover {
+			text-decoration: none;
+		}
+		</style>
+		<script language="JavaScript">
+		/**
+		 * Example JS
+		 */
+		$(function () {
+			var areas = [
+				{ id:1, x:10, y:10, radius:5, caption:'example', visible: false },
+				{ id:'string-id', x:100, y:150, radius:20, caption:'string id example', visible: false },
+				{ id:3, x:200, y:160, radius:50, caption:'not draggable example', draggable: false, visible: false },
+				{ id:4, x:120, y:100, radius:30, caption:'not resizable example', resizable: false, visible: false }
+			];
+			var highlighter = $('.container').areahighlighter({
+				areas: areas
+			});
+			var labelsContainer = $('.labels-container');
+			for ( var i=0;i<areas.length;i++ ) {
+				labelsContainer.append('<a class="label" data-id="'+areas[i].id+'">'+areas[i].caption+'</a>'+(i==areas.length-1?'':', '));
+			}
+			$('.label').hover(function () {
+				var label = $(this);
+				highlighter.areahighlighter('showArea', label.data('id'));
+			}, function () {
+				highlighter.areahighlighter('hideAreas');
+			});
+		});
+		</script>
+		
+		<div class="container"></div>
+		<div class="labels-container">
+			Hover labels to show areas:<br>
+		</div>
+  
+	</body>
+</html>
