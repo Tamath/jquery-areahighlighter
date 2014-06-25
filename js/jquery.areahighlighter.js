@@ -29,6 +29,11 @@
 			}
 		}else{
 			switch ( action ) {
+                case 'getArea':
+                    if ( areas[area] ) {
+                        return areas[area];
+                    }
+                    break;
 				case 'getAreas':
 					return areas;
 					break;
@@ -65,8 +70,8 @@
         if ( area.draggable==true && area.helper.is('.ui-draggable')==false ) {
             area.helper.draggable({
                 stop : function (event, ui) {
-                    area.y = ui.position.top+area.radius/2;
-                    area.x = ui.position.left+area.radius/2;
+                    area.y = ui.position.top+area.radius;
+                    area.x = ui.position.left+area.radius;
                 },
                 containment: "parent"
             });
@@ -106,7 +111,7 @@
             resizable: true
         }, data);
         area.helper =
-            $('<div title="'+area.caption+'" class="areahighlighter-helper" style="border-radius:'+area.radius+'px;left:'+(area.x-area.radius/2)+'px;top:'+(area.y-area.radius/2)+'px;width:'+(area.radius*2)+'px;height:'+(area.radius*2)+'px;display:'+(area.visible?'block':'none')+';"></div>')
+            $('<div title="'+area.caption+'" class="areahighlighter-helper" style="border-radius:'+area.radius+'px;left:'+(area.x-area.radius)+'px;top:'+(area.y-area.radius)+'px;width:'+(area.radius*2)+'px;height:'+(area.radius*2)+'px;display:'+(area.visible?'block':'none')+';"></div>')
             .appendTo(target);
 		areas[area.id] = area;
 		handleArea(area);
