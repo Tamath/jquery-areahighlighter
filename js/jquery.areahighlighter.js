@@ -24,7 +24,7 @@
 			var options = $.fn.extend({
 				areas : []
 			}, action);
-			for ( var i=0; i<options.areas.length; i++ ) {
+			for ( var i in options.areas ) {
 				addArea(options.areas[i]);
 			}
 		}else{
@@ -70,8 +70,8 @@
         if ( area.draggable==true && area.helper.is('.ui-draggable')==false ) {
             area.helper.draggable({
                 stop : function (event, ui) {
-                    area.y = ui.position.top+area.radius;
-                    area.x = ui.position.left+area.radius;
+                    area.y = 0+ui.position.top+parseInt(area.radius);
+                    area.x = 0+ui.position.left+parseInt(area.radius);
                 },
                 containment: "parent"
             });
@@ -179,7 +179,7 @@
      */
     function updateArea(areaId, data) {
         if ( areas[areaId] ) {
-            var properties = ['caption','x','y','radius','draggable'];
+            var properties = ['caption','x','y','radius','draggable','sortable'];
             for ( var i in properties ) {
                 if ( typeof data[properties[i]] !== 'undefined' ) {
                     areas[areaId][properties[i]] = data[properties[i]];
